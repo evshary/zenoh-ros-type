@@ -27,7 +27,7 @@ pub struct ControlHorizon {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone)]
-pub struct LongitudinalCommand {
+pub struct Longitudinal {
     pub stamp: Time,
     pub control_time: Time,
     pub velocity: f32,
