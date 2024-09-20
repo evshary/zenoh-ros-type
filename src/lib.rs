@@ -11,12 +11,14 @@
 //! messages used in Autoware
 
 pub mod autoware_auto_msgs;
+pub mod autoware_msgs;
 pub mod common_interfaces;
 pub mod rcl_interfaces;
 pub mod service;
 pub mod tier4_autoware_msgs;
 
 pub use autoware_auto_msgs::*;
+pub use autoware_msgs::*;
 pub use common_interfaces::*;
 pub use rcl_interfaces::*;
 pub use tier4_autoware_msgs::*;
