@@ -6,9 +6,9 @@
 //! Here are some ROS message source:
 //! * [common_interface](https://github.com/ros2/common_interfaces): Common-used ROS message
 //! * [rcl_interface](https://github.com/ros2/rcl_interfaces): Common interface in RCL
-//! * [autoware_auto_msgs](https://github.com/tier4/autoware_auto_msgs/tree/tier4/main)
-//! * [tier4_autoware_msgs](https://github.com/tier4/tier4_autoware_msgs/tree/tier4/universe)
-//! messages used in Autoware
+//! * [autoware_auto_msgs](https://github.com/tier4/autoware_auto_msgs/tree/tier4/main): Messages used in Autoware
+//! * [tier4_autoware_msgs](https://github.com/tier4/tier4_autoware_msgs/tree/tier4/universe): Messages used in Autoware
+//!
 
 pub mod autoware_auto_msgs;
 pub mod autoware_msgs;
