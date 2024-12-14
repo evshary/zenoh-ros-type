@@ -1,5 +1,6 @@
-use crate::{geometry_msgs::Point, std_msgs::Header};
 use serde_derive::{Deserialize, Serialize};
+
+use crate::{geometry_msgs::Point, std_msgs::Header};
 
 #[derive(Serialize, Deserialize, PartialEq, Clone)]
 pub struct Complex32 {

@@ -1,6 +1,6 @@
-use crate::builtin_interfaces::Time;
-use crate::std_msgs::Header;
 use serde_derive::{Deserialize, Serialize};
+
+use crate::{builtin_interfaces::Time, std_msgs::Header};
 
 pub mod control_mode_command {
     pub const NO_COMMAND: u8 = 0;
