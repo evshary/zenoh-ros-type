@@ -1,5 +1,6 @@
-use crate::std_msgs;
 use serde_derive::{Deserialize, Serialize};
+
+use crate::std_msgs;
 
 #[derive(Serialize, Deserialize, PartialEq, Clone)]
 pub struct Accel {
