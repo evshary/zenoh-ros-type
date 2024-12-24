@@ -5,7 +5,7 @@ use zenoh::{Config, Wait};
 use zenoh_ros_type::common_interfaces::std_msgs;
 
 fn main() {
-    let key_expr = "talker";
+    let key_expr = "chatter";
     let session = zenoh::open(Config::default()).wait().unwrap();
     let publisher = session.declare_publisher(key_expr).wait().unwrap();
     let mut cnt = 0;
