@@ -7,9 +7,11 @@ We can communicate to the ROS application behind [zenoh-bridge-dds](https://gith
 * [API documentation](https://docs.rs/zenoh-ros-type)
 * [crates.io](https://crates.io/crates/zenoh-ros-type)
 
-## Example
+## Examples
 
-There are some examples for how to use zenoh-ros-type in your application.
+You can check the examples folder for the basic usage.
+
+Also, there are some examples for how to use zenoh-ros-type in your application.
 
 * [autoware_manual_control_rs](https://github.com/evshary/autoware_manual_control_rs): Control multiple Autoware with the help of Zenoh.
 * [zenoh_carla_bridge](https://github.com/evshary/zenoh_carla_bridge): Bridge the Carla and Autoware with Zenoh.

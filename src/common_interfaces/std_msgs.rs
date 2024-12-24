@@ -8,6 +8,12 @@ pub struct Header {
     pub frame_id: String,
 }
 
+// To avoid conflict with the basic type in Rust, we add underscore
+#[derive(Serialize, Deserialize, PartialEq, Clone)]
+pub struct String_ {
+    pub data: String,
+}
+
 #[derive(Serialize, Deserialize, PartialEq, Clone)]
 pub struct ColorRGBA {
     pub r: f32,
