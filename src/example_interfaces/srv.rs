@@ -1,12 +1,12 @@
 use serde_derive::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, PartialEq, Clone)]
-struct AddTwoIntsRequest {
-    a: i64,
-    b: i64,
+pub struct AddTwoIntsRequest {
+    pub a: i64,
+    pub b: i64,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone)]
-struct AddTwoIntsReply {
-    sum: i64,
+pub struct AddTwoIntsReply {
+    pub sum: i64,
 }
