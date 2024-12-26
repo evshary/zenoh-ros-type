@@ -11,6 +11,7 @@
 //! * [tier4_autoware_msgs](https://github.com/tier4/tier4_autoware_msgs/tree/tier4/universe): Messages used in Autoware
 //!
 
+pub mod action;
 pub mod autoware_auto_msgs;
 pub mod autoware_msgs;
 pub mod common_interfaces;
