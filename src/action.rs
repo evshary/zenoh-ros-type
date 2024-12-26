@@ -8,8 +8,7 @@ use crate::builtin_interfaces::Time;
 /// The response struct for Action SendGoal
 #[derive(Serialize, Deserialize, PartialEq, Clone)]
 pub struct ActionSendGoalResponse {
-    // Refer to action_goal_response
-    pub accept: bool,
+    pub accept: bool, // Accept the request or not
     pub timestamp: Time,
 }
 
@@ -21,21 +20,15 @@ pub struct ActionResultRequest {
 
 /// The request struct for cancelling goal service
 #[derive(Serialize, Deserialize, PartialEq, Clone)]
-pub struct ActionCanelRequest {
+pub struct ActionCancelRequest {
     pub goal_id: [u8; 16],
     pub timestamp: Time,
 }
 
-pub mod action_cancel_response {
-    pub const REJECT: i8 = 1;
-    pub const ACCEPT: i8 = 2;
-}
-
 /// The response struct for cancelling goal service
 #[derive(Serialize, Deserialize, PartialEq, Clone)]
-pub struct ActionCanelResponse {
-    // refer to action_cancel_response
-    pub response_code: i8,
+pub struct ActionCancelResponse {
+    pub response_code: i8, // OK, REJECTED or INVALID_GOAL_ID
     pub goal_id: Vec<[u8; 16]>,
 }
 

@@ -47,12 +47,25 @@ fn main() {
     };
     let buf = cdr::serialize::<_, _, CdrLe>(&req, Infinite).unwrap();
     let recv_handler = send_goal_client.get().payload(buf).wait().unwrap();
-
     let reply_sample = recv_handler.recv().unwrap();
     let reader = reply_sample.result().unwrap().payload().reader();
     let reply: action::ActionSendGoalResponse =
         cdr::deserialize_from(reader, cdr::size::Infinite).unwrap();
     println!("The result of SendGoal: {:?}", reply.accept);
+
+    //// Cancel goal client
+    //std::thread::sleep(std::time::Duration::from_secs(1));
+    //let req = action::ActionCancelRequest {
+    //    goal_id: [1; 16],
+    //    timestamp: zenoh_ros_type::builtin_interfaces::Time { sec: 0, nanosec: 0 },
+    //};
+    //let buf = cdr::serialize::<_, _, CdrLe>(&req, Infinite).unwrap();
+    //let recv_handler = _cancel_goal_client.get().payload(buf).wait().unwrap();
+    //let reply_sample = recv_handler.recv().unwrap();
+    //let reader = reply_sample.result().unwrap().payload().reader();
+    //let reply: action::ActionCancelResponse =
+    //    cdr::deserialize_from(reader, cdr::size::Infinite).unwrap();
+    //println!("Cancel {:?}: {:?}", reply.goal_id, reply.response_code);
 
     // Wait for the result
     std::thread::sleep(std::time::Duration::from_secs(10));
@@ -61,7 +74,6 @@ fn main() {
     let req = action::ActionResultRequest { goal_id: [1; 16] };
     let buf = cdr::serialize::<_, _, CdrLe>(&req, Infinite).unwrap();
     let recv_handler = get_result_client.get().payload(buf).wait().unwrap();
-
     let reply_sample = recv_handler.recv().unwrap();
     let reader = reply_sample.result().unwrap().payload().reader();
     let reply: example_action::FibonacciResult =
