@@ -1,7 +1,6 @@
 use cdr::{CdrLe, Infinite};
 use zenoh::{Config, Wait};
-use zenoh_ros_type::action;
-use zenoh_ros_type::example_interfaces::action as example_action;
+use zenoh_ros_type::{action, example_interfaces::action as example_action};
 
 // Refer to https://design.ros2.org/articles/actions.html
 fn main() {
