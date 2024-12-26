@@ -1,16 +1,9 @@
-use serde_derive::{Deserialize, Serialize};
-
-use crate::builtin_interfaces::Time;
-
 /// The struct is used by ROS action.
 /// If you want to sent ROS action with Zenoh directly. You should include the header.
 /// Refer to https://design.ros2.org/articles/actions.html for more detail.
+use serde_derive::{Deserialize, Serialize};
 
-//pub mod action_goal_response {
-//    pub const REJECT: i8 = 1;
-//    pub const ACCEPT_AND_EXECUTE: i8 = 2;
-//    pub const ACCEPT_AND_DEFER: i8 = 3;
-//}
+use crate::builtin_interfaces::Time;
 
 /// The response struct for Action SendGoal
 #[derive(Serialize, Deserialize, PartialEq, Clone)]
