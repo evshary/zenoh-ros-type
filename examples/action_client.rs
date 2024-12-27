@@ -2,7 +2,6 @@ use cdr::{CdrLe, Infinite};
 use zenoh::{Config, Wait};
 use zenoh_ros_type::{action, example_interfaces::action as example_action};
 
-// Refer to https://design.ros2.org/articles/actions.html
 fn main() {
     let key_expr = "fibonacci";
     let send_goal_expr = key_expr.to_string() + "/_action/send_goal";
@@ -42,7 +41,7 @@ fn main() {
 
     // Send goal client
     let req = example_action::FibonacciSendGoal {
-        goal_id: [1; 16],
+        goal_id: [1; 16], // TODO: We should use random here
         goal: 10,
     };
     let buf = cdr::serialize::<_, _, CdrLe>(&req, Infinite).unwrap();
@@ -78,5 +77,5 @@ fn main() {
     let reader = reply_sample.result().unwrap().payload().reader();
     let reply: example_action::FibonacciResult =
         cdr::deserialize_from(reader, cdr::size::Infinite).unwrap();
-    println!("The result of {:?}: {:?}", reply.sequence, reply.status);
+    println!("The result: {:?} {:?}", reply.status, reply.sequence);
 }
