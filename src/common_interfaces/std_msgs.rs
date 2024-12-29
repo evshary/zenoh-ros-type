@@ -2,19 +2,19 @@ use serde_derive::{Deserialize, Serialize};
 
 use crate::builtin_interfaces::Time;
 
-#[derive(Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct Header {
     pub stamp: Time,
     pub frame_id: String,
 }
 
 // To avoid conflict with the basic type in Rust, we add underscore
-#[derive(Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct String_ {
     pub data: String,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct ColorRGBA {
     pub r: f32,
     pub g: f32,

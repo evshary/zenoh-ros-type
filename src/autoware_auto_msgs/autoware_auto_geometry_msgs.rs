@@ -2,13 +2,13 @@ use serde_derive::{Deserialize, Serialize};
 
 use crate::{geometry_msgs::Point, std_msgs::Header};
 
-#[derive(Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct Complex32 {
     pub real: f32,
     pub imag: f32,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct Quaternion32 {
     pub x: f32,
     pub y: f32,
@@ -16,7 +16,7 @@ pub struct Quaternion32 {
     pub w: f32,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct RelativePositionWithCovarianceStamped {
     pub header: Header,
     pub child_frame_id: String,
