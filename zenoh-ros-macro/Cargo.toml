@@ -1,7 +1,14 @@
 [package]
+authors = { workspace = true }
+description = { workspace = true }
+documentation = { workspace = true }
+edition = { workspace = true }
+homepage = { workspace = true }
+license = { workspace = true }
+readme = { workspace = true }
 name = "zenoh-ros-macro"
-version = "0.1.0"
-edition = "2021"
+repository = { workspace = true }
+version = { workspace = true }
 
 [dependencies]
 quote = "1.0"
