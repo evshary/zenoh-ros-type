@@ -1,8 +1,9 @@
 use serde_derive::{Deserialize, Serialize};
+use zenoh_ros_derive::ZBytesCdr;
 
 use crate::builtin_interfaces::Time;
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct Control {
     pub stamp: Time,
     pub control_time: Time,
@@ -10,7 +11,7 @@ pub struct Control {
     pub longitudinal: Longitudinal,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct Lateral {
     pub stamp: Time,
     pub control_time: Time,
@@ -19,7 +20,7 @@ pub struct Lateral {
     pub is_defined_steering_tire_rotation_rate: bool,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct ControlHorizon {
     pub stamp: Time,
     pub control_time: Time,
@@ -27,7 +28,7 @@ pub struct ControlHorizon {
     pub controls: Control,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct Longitudinal {
     pub stamp: Time,
     pub control_time: Time,

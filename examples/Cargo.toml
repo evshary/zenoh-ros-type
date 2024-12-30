@@ -11,8 +11,5 @@ repository = { workspace = true }
 version = { workspace = true }
 
 [dependencies]
-cdr = { workspace = true }
-serde = { workspace = true }
-serde_derive = { workspace = true }
 zenoh = { workspace = true }
 zenoh-ros-type = { workspace = true }

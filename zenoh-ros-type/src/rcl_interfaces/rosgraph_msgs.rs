@@ -1,8 +1,9 @@
 use serde_derive::{Deserialize, Serialize};
+use zenoh_ros_derive::ZBytesCdr;
 
 use crate::builtin_interfaces::Time;
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct Clock {
     pub clock: Time,
 }

@@ -1,6 +1,5 @@
 use std::{sync::mpsc, time::Duration};
 
-use cdr::{CdrLe, Infinite};
 use zenoh::{Config, Wait};
 use zenoh_ros_type::{action, builtin_interfaces, example_interfaces::action as example_action};
 
@@ -21,8 +20,7 @@ fn main() {
     let _send_goal_server = session
         .declare_queryable(send_goal_expr.clone())
         .callback(move |query| {
-            let send_goal: example_action::FibonacciSendGoal =
-                cdr::deserialize(&query.payload().unwrap().to_bytes()).unwrap();
+            let send_goal: example_action::FibonacciSendGoal = query.payload().unwrap().into();
             println!("Receive {:?}: {:?}", send_goal.goal_id, send_goal.goal);
             tx.send(send_goal).unwrap();
 
@@ -32,8 +30,10 @@ fn main() {
                 // TODO: We should have a correct timestamp
                 timestamp: builtin_interfaces::Time { sec: 0, nanosec: 0 },
             };
-            let payload = cdr::serialize::<_, _, CdrLe>(&send_goal_response, Infinite).unwrap();
-            query.reply(&send_goal_expr, payload).wait().unwrap();
+            query
+                .reply(&send_goal_expr, send_goal_response)
+                .wait()
+                .unwrap();
         })
         .wait()
         .unwrap();
@@ -62,8 +62,7 @@ fn main() {
             status: action::action_status::EXECUTING,
         };
         println!("Publish status {:?}: {:?}", msg.goal_id, msg.status);
-        let payload = cdr::serialize::<_, _, CdrLe>(&msg, Infinite).unwrap();
-        status_publisher.put(payload).wait().unwrap();
+        status_publisher.put(msg).wait().unwrap();
 
         // Calculate and publish the feedback
         let mut feedback = vec![0, 1];
@@ -75,8 +74,7 @@ fn main() {
                 goal_id,
                 sequence: feedback.clone(),
             };
-            let payload = cdr::serialize::<_, _, CdrLe>(&msg, Infinite).unwrap();
-            feedback_publisher.put(payload).wait().unwrap();
+            feedback_publisher.put(msg).wait().unwrap();
             std::thread::sleep(Duration::from_secs(1));
         }
 
@@ -88,19 +86,19 @@ fn main() {
             status: action::action_status::SUCCEEDED,
         };
         println!("Publish status {:?}: {:?}", msg.goal_id, msg.status);
-        let payload = cdr::serialize::<_, _, CdrLe>(&msg, Infinite).unwrap();
-        status_publisher.put(payload).wait().unwrap();
+        status_publisher.put(msg).wait().unwrap();
 
         // Reply the get_result
         let query = get_result_server.recv().unwrap();
-        let get_result: action::ActionResultRequest =
-            cdr::deserialize(&query.payload().unwrap().to_bytes()).unwrap();
+        let get_result: action::ActionResultRequest = query.payload().unwrap().into();
         println!("Get result goal_id: {:?}", get_result.goal_id);
         let get_result_response = example_action::FibonacciResult {
             status: action::action_status::SUCCEEDED,
             sequence: feedback,
         };
-        let payload = cdr::serialize::<_, _, CdrLe>(&get_result_response, Infinite).unwrap();
-        query.reply(&get_result_expr, payload).wait().unwrap();
+        query
+            .reply(&get_result_expr, get_result_response)
+            .wait()
+            .unwrap();
     }
 }
