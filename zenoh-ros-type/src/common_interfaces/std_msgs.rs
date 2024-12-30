@@ -1,5 +1,5 @@
 use serde_derive::{Deserialize, Serialize};
-use zenoh_ros_macro::ZBytesCdr;
+//use zenoh_ros_macro::ZBytesCdr;
 
 use crate::builtin_interfaces::Time;
 
@@ -10,7 +10,7 @@ pub struct Header {
 }
 
 // To avoid conflict with the basic type in Rust, we add underscore
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct String_ {
     pub data: String,
 }
