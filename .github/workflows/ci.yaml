@@ -46,6 +46,7 @@ jobs:
           components: clippy
       - name: Run cargo check
         run: |
+          cargo clean
           cargo check --all --tests
       - name: Check code format
         run: |
