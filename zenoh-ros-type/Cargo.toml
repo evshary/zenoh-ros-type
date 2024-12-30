@@ -1,0 +1,23 @@
+[package]
+name = "zenoh-ros-type"
+version = "0.3.4"
+authors = ["ChenYing Kuo <evshary@gmail.com>"]
+description = "Common Rust struct for ROS 2 messages used by Zenoh"
+edition = "2021"
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/evshary/zenoh-ros-type"
+repository = "https://github.com/evshary/zenoh-ros-type"
+documentation = "https://docs.rs/zenoh-ros-type/"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = "1.0.216"
+serde_derive = "1.0.216"
+
+[dev-dependencies]
+zenoh = { version = "1.1.0", features = [
+  "unstable",
+] }
+cdr = "0.2.4"
