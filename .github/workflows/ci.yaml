@@ -44,9 +44,9 @@ jobs:
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
           components: clippy
-      #- name: Run cargo check
-      #  run: |
-      #    cargo check --all --tests
+      - name: Run cargo check
+        run: |
+          cargo check --all --tests
       - name: Check code format
         run: |
           cargo fmt --check -- --config "unstable_features=true,imports_granularity=Crate,group_imports=StdExternalCrate"
