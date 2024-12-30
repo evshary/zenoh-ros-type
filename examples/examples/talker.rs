@@ -1,6 +1,5 @@
 use std::time::Duration;
 
-use cdr::{CdrLe, Infinite};
 use zenoh::{Config, Wait};
 use zenoh_ros_type::common_interfaces::std_msgs;
 
@@ -13,8 +12,7 @@ fn main() {
         let data = format!("Hello World {}!", cnt);
         println!("Publish: {}", data);
         let msg = std_msgs::String_ { data };
-        let payload = cdr::serialize::<_, _, CdrLe>(&msg, Infinite).unwrap();
-        publisher.put(payload).wait().unwrap();
+        publisher.put(msg).wait().unwrap();
         std::thread::sleep(Duration::from_secs(1));
         cnt += 1;
     }

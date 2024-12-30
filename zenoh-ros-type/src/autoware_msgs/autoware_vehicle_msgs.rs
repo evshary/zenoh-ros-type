@@ -1,4 +1,5 @@
 use serde_derive::{Deserialize, Serialize};
+use zenoh_ros_derive::ZBytesCdr;
 
 use crate::{builtin_interfaces::Time, std_msgs::Header};
 
@@ -11,13 +12,13 @@ pub mod control_mode_report {
     pub const DISENGAGED: u8 = 5;
     pub const NOT_READY: u8 = 6;
 }
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct ControlModeReport {
     pub stamp: Time,
     pub mode: u8,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct Engage {
     pub stamp: Time,
     pub enable: bool,
@@ -50,7 +51,7 @@ pub mod gear_command {
     pub const LOW: u8 = 23;
     pub const LOW_2: u8 = 24;
 }
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct GearCommand {
     pub stamp: Time,
     pub command: u8,
@@ -83,7 +84,7 @@ pub mod gear_report {
     pub const LOW: u8 = 23;
     pub const LOW_2: u8 = 24;
 }
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct GearReport {
     pub stamp: Time,
     pub report: u8,
@@ -94,7 +95,7 @@ pub mod hazard_lights_command {
     pub const DISABLE: u8 = 1;
     pub const ENABLE: u8 = 2;
 }
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct HazardLightsCommand {
     pub stamp: Time,
     pub command: u8,
@@ -104,13 +105,13 @@ pub mod hazard_lights_report {
     pub const DISABLE: u8 = 1;
     pub const ENABLE: u8 = 2;
 }
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct HazardLightsReport {
     pub stamp: Time,
     pub report: u8,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct SteeringReport {
     pub stamp: Time,
     pub steering_tire_angle: f32,
@@ -122,7 +123,7 @@ pub mod turn_indicators_command {
     pub const ENABLE_LEFT: u8 = 2;
     pub const ENABLE_RIGHT: u8 = 3;
 }
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct TurnIndicatorsCommand {
     pub stamp: Time,
     pub command: u8,
@@ -133,13 +134,13 @@ pub mod turn_indicators_report {
     pub const ENABLE_LEFT: u8 = 2;
     pub const ENABLE_RIGHT: u8 = 3;
 }
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct TurnIndicatorsReport {
     pub stamp: Time,
     pub report: u8,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct VelocityReport {
     pub header: Header,
     pub longitudinal_velocity: f32,

@@ -7,8 +7,7 @@ fn main() {
     let _subscriber = session
         .declare_subscriber(key_expr)
         .callback(|sample| {
-            let msg: std_msgs::String_ =
-                cdr::deserialize_from(sample.payload().reader(), cdr::size::Infinite).unwrap();
+            let msg: std_msgs::String_ = sample.payload().into();
             println!("Receive: {}", msg.data);
         })
         .wait()

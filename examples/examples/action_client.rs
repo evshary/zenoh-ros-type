@@ -1,4 +1,3 @@
-use cdr::{CdrLe, Infinite};
 use zenoh::{Config, Wait};
 use zenoh_ros_type::{action, example_interfaces::action as example_action};
 
@@ -18,8 +17,7 @@ fn main() {
     let _feedback_subscriber = session
         .declare_subscriber(feedback_expr)
         .callback(|sample| {
-            let feedback: example_action::FibonacciFeedback =
-                cdr::deserialize_from(sample.payload().reader(), cdr::size::Infinite).unwrap();
+            let feedback: example_action::FibonacciFeedback = sample.payload().into();
             println!(
                 "The feedback of {:?}: {:?}",
                 feedback.goal_id, feedback.sequence
@@ -30,8 +28,7 @@ fn main() {
     let _status_subscriber = session
         .declare_subscriber(status_expr)
         .callback(|sample| {
-            let status: action::ActionStatus =
-                cdr::deserialize_from(sample.payload().reader(), cdr::size::Infinite).unwrap();
+            let status: action::ActionStatus = sample.payload().into();
             println!("The status of {:?}: {:?}", status.goal_id, status.status);
         })
         .wait()
@@ -44,12 +41,9 @@ fn main() {
         goal_id: [1; 16], // TODO: We should use random here
         goal: 10,
     };
-    let buf = cdr::serialize::<_, _, CdrLe>(&req, Infinite).unwrap();
-    let recv_handler = send_goal_client.get().payload(buf).wait().unwrap();
+    let recv_handler = send_goal_client.get().payload(req).wait().unwrap();
     let reply_sample = recv_handler.recv().unwrap();
-    let reader = reply_sample.result().unwrap().payload().reader();
-    let reply: action::ActionSendGoalResponse =
-        cdr::deserialize_from(reader, cdr::size::Infinite).unwrap();
+    let reply: action::ActionSendGoalResponse = reply_sample.result().unwrap().payload().into();
     println!("The result of SendGoal: {:?}", reply.accept);
 
     //// Cancel goal client
@@ -58,12 +52,9 @@ fn main() {
     //    goal_id: [1; 16],
     //    timestamp: zenoh_ros_type::builtin_interfaces::Time { sec: 0, nanosec: 0 },
     //};
-    //let buf = cdr::serialize::<_, _, CdrLe>(&req, Infinite).unwrap();
-    //let recv_handler = _cancel_goal_client.get().payload(buf).wait().unwrap();
+    //let recv_handler = _cancel_goal_client.get().payload(req).wait().unwrap();
     //let reply_sample = recv_handler.recv().unwrap();
-    //let reader = reply_sample.result().unwrap().payload().reader();
-    //let reply: action::ActionCancelResponse =
-    //    cdr::deserialize_from(reader, cdr::size::Infinite).unwrap();
+    //let reply: action::ActionCancelResponse = reply_sample.result().unwrap().payload().into();
     //println!("Cancel {:?}: {:?}", reply.goal_id, reply.response_code);
 
     // Wait for the result
@@ -71,11 +62,8 @@ fn main() {
 
     // Get result client
     let req = action::ActionResultRequest { goal_id: [1; 16] };
-    let buf = cdr::serialize::<_, _, CdrLe>(&req, Infinite).unwrap();
-    let recv_handler = get_result_client.get().payload(buf).wait().unwrap();
+    let recv_handler = get_result_client.get().payload(req).wait().unwrap();
     let reply_sample = recv_handler.recv().unwrap();
-    let reader = reply_sample.result().unwrap().payload().reader();
-    let reply: example_action::FibonacciResult =
-        cdr::deserialize_from(reader, cdr::size::Infinite).unwrap();
+    let reply: example_action::FibonacciResult = reply_sample.result().unwrap().payload().into();
     println!("The result: {:?} {:?}", reply.status, reply.sequence);
 }

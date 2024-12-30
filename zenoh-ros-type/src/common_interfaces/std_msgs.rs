@@ -3,7 +3,7 @@ use zenoh_ros_derive::ZBytesCdr;
 
 use crate::builtin_interfaces::Time;
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct Header {
     pub stamp: Time,
     pub frame_id: String,
@@ -15,7 +15,7 @@ pub struct String_ {
     pub data: String,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct ColorRGBA {
     pub r: f32,
     pub g: f32,

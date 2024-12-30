@@ -3225,9 +3225,6 @@ dependencies = [
 name = "zenoh-ros-type-examples"
 version = "0.3.4"
 dependencies = [
- "cdr",
- "serde",
- "serde_derive",
  "zenoh",
  "zenoh-ros-type",
 ]

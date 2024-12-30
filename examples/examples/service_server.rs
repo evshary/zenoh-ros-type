@@ -1,4 +1,3 @@
-use cdr::{CdrLe, Infinite};
 use zenoh::{Config, Wait};
 use zenoh_ros_type::example_interfaces::srv;
 
@@ -8,15 +7,13 @@ fn main() {
     let _queryable = session
         .declare_queryable(key_expr)
         .callback(move |query| {
-            let request: srv::AddTwoIntsRequest =
-                cdr::deserialize(&query.payload().unwrap().to_bytes()).unwrap();
+            let request: srv::AddTwoIntsRequest = query.payload().unwrap().into();
             println!("Receive a={}, b={}", request.a, request.b);
             let response = srv::AddTwoIntsReply {
                 sum: request.a + request.b,
             };
             println!("Send back {}", response.sum);
-            let data = cdr::serialize::<_, _, CdrLe>(&response, Infinite).unwrap();
-            query.reply(key_expr, data).wait().unwrap();
+            query.reply(key_expr, response).wait().unwrap();
         })
         .wait()
         .unwrap();
