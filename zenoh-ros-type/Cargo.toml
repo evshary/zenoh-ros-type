@@ -15,6 +15,7 @@ documentation = "https://docs.rs/zenoh-ros-type/"
 [dependencies]
 serde = "1.0.216"
 serde_derive = "1.0.216"
+zenoh-ros-macro = { path = "../zenoh-ros-macro" }
 
 [dev-dependencies]
 zenoh = { version = "1.1.0", features = [

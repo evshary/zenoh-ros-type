@@ -1,4 +1,6 @@
 [workspace]
+resolver = "3"
 members = [
+    "zenoh-ros-macro",
     "zenoh-ros-type",
 ]
