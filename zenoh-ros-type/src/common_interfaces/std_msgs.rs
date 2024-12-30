@@ -1,5 +1,5 @@
 use serde_derive::{Deserialize, Serialize};
-use zenoh_ros_macro::ZBytesCdr;
+use zenoh_ros_derive::ZBytesCdr;
 
 use crate::builtin_interfaces::Time;
 

@@ -3202,7 +3202,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "zenoh-ros-macro"
+name = "zenoh-ros-derive"
 version = "0.3.4"
 dependencies = [
  "proc-macro2",
@@ -3218,7 +3218,18 @@ dependencies = [
  "serde",
  "serde_derive",
  "zenoh",
- "zenoh-ros-macro",
+ "zenoh-ros-derive",
+]
+
+[[package]]
+name = "zenoh-ros-type-examples"
+version = "0.3.4"
+dependencies = [
+ "cdr",
+ "serde",
+ "serde_derive",
+ "zenoh",
+ "zenoh-ros-type",
 ]
 
 [[package]]
