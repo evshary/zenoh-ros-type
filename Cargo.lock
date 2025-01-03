@@ -3215,6 +3215,7 @@ name = "zenoh-ros-type"
 version = "0.3.5"
 dependencies = [
  "cdr",
+ "paste",
  "serde",
  "serde_derive",
  "zenoh",

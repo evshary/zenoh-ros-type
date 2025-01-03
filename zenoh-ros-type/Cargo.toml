@@ -12,6 +12,7 @@ version = { workspace = true }
 
 [dependencies]
 cdr = { workspace = true }
+paste = { workspace = true }
 serde = { workspace = true }
 serde_derive = { workspace = true }
 zenoh = { workspace = true }
