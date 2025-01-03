@@ -11,3 +11,20 @@ pub struct AddTwoIntsRequest {
 pub struct AddTwoIntsReply {
     pub sum: i64,
 }
+
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
+pub struct SetBoolRequest {
+    pub data: bool,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
+pub struct SetBoolReply {
+    pub success: bool,
+    pub message: String,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
+pub struct TriggerReply {
+    pub success: bool,
+    pub message: String,
+}
