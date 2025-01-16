@@ -6,10 +6,10 @@ on:
       - main
   pull_request:
     paths:
-      - "src/**"
-      - "tests/**"
-      - "examples/**"
-      - "Cargo.*"
+      - "*/src/**"
+      - "*/tests/**"
+      - "*/examples/**"
+      - "*/Cargo.*"
       - ".github/**"
   schedule:
     - cron: '0 1 * * *'

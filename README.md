@@ -12,6 +12,7 @@ The library supports the following message type:
 * [common_interface](https://github.com/ros2/common_interfaces): Common-used ROS message
 * [example_interfaces](https://github.com/ros2/example_interfaces): Example interfaces in ROS 2
 * [rcl_interface](https://github.com/ros2/rcl_interfaces): Common interface in RCL
+* [unique_identifier_msgs](https://github.com/ros2/unique_identifier_msgs): UUID message type in ROS 2
 * [autoware_auto_msgs](https://github.com/tier4/autoware_auto_msgs/tree/tier4/main): Messages used in Autoware
 * [tier4_autoware_msgs](https://github.com/tier4/tier4_autoware_msgs/tree/tier4/universe): Messages used in Autoware
 
