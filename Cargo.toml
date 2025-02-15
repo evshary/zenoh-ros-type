@@ -15,7 +15,7 @@ homepage = "https://github.com/evshary/zenoh-ros-type"
 license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/evshary/zenoh-ros-type"
-version = "0.3.5"
+version = "0.3.6"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -27,5 +27,5 @@ serde_derive = "1.0.216"
 zenoh = { version = "1.1.0", features = [
   "unstable",
 ] }
-zenoh-ros-derive = { version = "0.3.5", path = "zenoh-ros-derive" }
-zenoh-ros-type = { version = "0.3.5", path = "zenoh-ros-type" }
+zenoh-ros-derive = { version = "0.3.6", path = "zenoh-ros-derive" }
+zenoh-ros-type = { version = "0.3.6", path = "zenoh-ros-type" }
