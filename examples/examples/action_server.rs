@@ -3,9 +3,10 @@ use std::{sync::mpsc, time::Duration};
 use zenoh::{Config, Wait};
 use zenoh_ros_type::{
     action, builtin_interfaces, example_interfaces::action as example_action,
-    rcl_interfaces::action_msgs, unique_identifier_msgs::UUID,
+    rcl_interfaces::action_msgs,
 };
 
+// TODO: This should be moved to action.rs
 fn main() {
     let key_expr = "fibonacci";
     let send_goal_expr = key_expr.to_string() + "/_action/send_goal";
@@ -61,7 +62,7 @@ fn main() {
         let msg = action_msgs::GoalStatusArray {
             status_list: vec![action_msgs::GoalStatus {
                 goal_info: action_msgs::GoalInfo {
-                    goal_id: UUID { uuid: goal_id },
+                    goal_id: goal_id.clone(),
                     // TODO: We should have a correct timestamp
                     stamp: builtin_interfaces::Time { sec: 0, nanosec: 0 },
                 },
@@ -81,7 +82,7 @@ fn main() {
             feedback.push(feedback[feedback.len() - 1] + feedback[feedback.len() - 2]);
             println!("Publish feedback: {:?}", feedback);
             let msg = example_action::FibonacciFeedback {
-                goal_id,
+                goal_id: goal_id.clone(),
                 sequence: feedback.clone(),
             };
             feedback_publisher.put(msg).wait().unwrap();
@@ -92,7 +93,7 @@ fn main() {
         let msg = action_msgs::GoalStatusArray {
             status_list: vec![action_msgs::GoalStatus {
                 goal_info: action_msgs::GoalInfo {
-                    goal_id: UUID { uuid: goal_id },
+                    goal_id: goal_id.clone(),
                     // TODO: We should have a correct timestamp
                     stamp: builtin_interfaces::Time { sec: 0, nanosec: 0 },
                 },
