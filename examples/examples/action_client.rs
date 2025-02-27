@@ -1,45 +1,99 @@
-use zenoh::{Config, Wait};
+use zenoh::{bytes::ZBytes, Config, Wait};
 use zenoh_ros_type::{
     action, example_interfaces::action as example_action, rcl_interfaces::action_msgs,
 };
 
+// TODO: Move to action.rs
+pub struct ZenohActionClient<'a> {
+    _session: zenoh::session::Session,
+    send_goal_client: zenoh::query::Querier<'a>,
+    get_result_client: zenoh::query::Querier<'a>,
+    cancel_goal_client: zenoh::query::Querier<'a>,
+    _feedback_subscriber: zenoh::pubsub::Subscriber<()>,
+    _status_subscriber: zenoh::pubsub::Subscriber<()>,
+}
+
+impl ZenohActionClient<'_> {
+    pub fn new(key_expr: &str) -> Self {
+        let send_goal_expr = key_expr.to_string() + "/_action/send_goal";
+        let cancel_goal_expr = key_expr.to_string() + "/_action/cancel_goal";
+        let get_result_expr = key_expr.to_string() + "/_action/get_result";
+        let feedback_expr = key_expr.to_string() + "/_action/feedback";
+        let status_expr = key_expr.to_string() + "/_action/status";
+
+        // Declare the querier / subscriber for the action client
+        let session = zenoh::open(Config::default()).wait().unwrap();
+        let send_goal_client = session.declare_querier(send_goal_expr).wait().unwrap();
+        let get_result_client = session.declare_querier(get_result_expr).wait().unwrap();
+        let cancel_goal_client = session.declare_querier(cancel_goal_expr).wait().unwrap();
+        // TODO: We need to accept the callback
+        let feedback_subscriber = session
+            .declare_subscriber(feedback_expr)
+            .callback(|sample| {
+                let feedback: example_action::FibonacciFeedback = sample.payload().into();
+                println!(
+                    "The feedback of {:?}: {:?}",
+                    feedback.goal_id, feedback.sequence
+                );
+            })
+            .wait()
+            .unwrap();
+        // TODO: We need to accept the callback
+        let status_subscriber = session
+            .declare_subscriber(status_expr)
+            .callback(|sample| {
+                let status_array: action_msgs::GoalStatusArray = sample.payload().into();
+                for status in status_array.status_list {
+                    println!(
+                        "The status of {:?}: {:?}",
+                        status.goal_info.goal_id, status.status
+                    );
+                }
+            })
+            .wait()
+            .unwrap();
+        ZenohActionClient {
+            _session: session,
+            send_goal_client,
+            get_result_client,
+            cancel_goal_client,
+            _feedback_subscriber: feedback_subscriber,
+            _status_subscriber: status_subscriber,
+        }
+    }
+
+    pub fn send_goal<T: Into<ZBytes>>(&self, req: T) -> action::ActionSendGoalResponse {
+        let recv_handler = self.send_goal_client.get().payload(req).wait().unwrap();
+        let reply_sample = recv_handler.recv().unwrap();
+        reply_sample.result().unwrap().payload().into()
+    }
+
+    // TODO: Use UUID
+    pub fn cancel_goal(&self, uuid: [u8; 16]) -> action_msgs::CancelGoalResponse {
+        let req = action_msgs::CancelGoalRequest {
+            goal_info: action_msgs::GoalInfo {
+                goal_id: zenoh_ros_type::unique_identifier_msgs::UUID { uuid },
+                // TODO: We should have a correct timestamp
+                stamp: zenoh_ros_type::builtin_interfaces::Time { sec: 0, nanosec: 0 },
+            },
+        };
+        let recv_handler = self.cancel_goal_client.get().payload(req).wait().unwrap();
+        let reply_sample = recv_handler.recv().unwrap();
+        reply_sample.result().unwrap().payload().into()
+    }
+
+    // TODO: Use UUID
+    pub fn get_result(&self, goal_id: [u8; 16]) -> ZBytes {
+        let req = action::ActionResultRequest { goal_id };
+        let recv_handler = self.get_result_client.get().payload(req).wait().unwrap();
+        let reply_sample = recv_handler.recv().unwrap();
+        reply_sample.result().unwrap().payload().clone()
+    }
+}
+
 fn main() {
     let key_expr = "fibonacci";
-    let send_goal_expr = key_expr.to_string() + "/_action/send_goal";
-    let cancel_goal_expr = key_expr.to_string() + "/_action/cancel_goal";
-    let get_result_expr = key_expr.to_string() + "/_action/get_result";
-    let feedback_expr = key_expr.to_string() + "/_action/feedback";
-    let status_expr = key_expr.to_string() + "/_action/status";
-
-    // Declare the querier / subscriber for the action client
-    let session = zenoh::open(Config::default()).wait().unwrap();
-    let send_goal_client = session.declare_querier(send_goal_expr).wait().unwrap();
-    let get_result_client = session.declare_querier(get_result_expr).wait().unwrap();
-    let _cancel_goal_client = session.declare_querier(cancel_goal_expr).wait().unwrap();
-    let _feedback_subscriber = session
-        .declare_subscriber(feedback_expr)
-        .callback(|sample| {
-            let feedback: example_action::FibonacciFeedback = sample.payload().into();
-            println!(
-                "The feedback of {:?}: {:?}",
-                feedback.goal_id, feedback.sequence
-            );
-        })
-        .wait()
-        .unwrap();
-    let _status_subscriber = session
-        .declare_subscriber(status_expr)
-        .callback(|sample| {
-            let status_array: action_msgs::GoalStatusArray = sample.payload().into();
-            for status in status_array.status_list {
-                println!(
-                    "The status of {:?}: {:?}",
-                    status.goal_info.goal_id, status.status
-                );
-            }
-        })
-        .wait()
-        .unwrap();
+    let action_client = ZenohActionClient::new(key_expr);
 
     std::thread::sleep(std::time::Duration::from_secs(1));
 
@@ -48,23 +102,12 @@ fn main() {
         goal_id: [1; 16], // TODO: We should use random here
         goal: 10,
     };
-    let recv_handler = send_goal_client.get().payload(req).wait().unwrap();
-    let reply_sample = recv_handler.recv().unwrap();
-    let reply: action::ActionSendGoalResponse = reply_sample.result().unwrap().payload().into();
+    let reply = action_client.send_goal(req);
     println!("The result of SendGoal: {:?}", reply.accept);
 
     //// Cancel goal client
     //std::thread::sleep(std::time::Duration::from_secs(1));
-    //let req = action_msgs::CancelGoalRequest {
-    //    goal_info: action_msgs::GoalInfo {
-    //        goal_id: zenoh_ros_type::unique_identifier_msgs::UUID { uuid: [1; 16] },
-    //        // TODO: We should have a correct timestamp
-    //        stamp: zenoh_ros_type::builtin_interfaces::Time { sec: 0, nanosec: 0 },
-    //    },
-    //};
-    //let recv_handler = _cancel_goal_client.get().payload(req).wait().unwrap();
-    //let reply_sample = recv_handler.recv().unwrap();
-    //let reply: action_msgs::CancelGoalResponse = reply_sample.result().unwrap().payload().into();
+    //let reply = action_client.cancel_goal([1; 16]);
     //println!(
     //    "Cancel {:?}: {:?}",
     //    reply.goals_canceling, reply.return_code
@@ -74,9 +117,6 @@ fn main() {
     std::thread::sleep(std::time::Duration::from_secs(10));
 
     // Get result client
-    let req = action::ActionResultRequest { goal_id: [1; 16] };
-    let recv_handler = get_result_client.get().payload(req).wait().unwrap();
-    let reply_sample = recv_handler.recv().unwrap();
-    let reply: example_action::FibonacciResult = reply_sample.result().unwrap().payload().into();
+    let reply: example_action::FibonacciResult = action_client.get_result([1; 16]).into();
     println!("The result: {:?} {:?}", reply.status, reply.sequence);
 }
