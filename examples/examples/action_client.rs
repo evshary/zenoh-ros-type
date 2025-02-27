@@ -1,7 +1,6 @@
 use zenoh::{Config, Wait};
 use zenoh_ros_type::{
     action, example_interfaces::action as example_action, rcl_interfaces::action_msgs,
-    unique_identifier_msgs::UUID,
 };
 
 fn main() {
@@ -58,7 +57,7 @@ fn main() {
     //std::thread::sleep(std::time::Duration::from_secs(1));
     //let req = action_msgs::CancelGoalRequest {
     //    goal_info: action_msgs::GoalInfo {
-    //        goal_id: UUID { uuid: [1; 16] },
+    //        goal_id: zenoh_ros_type::unique_identifier_msgs::UUID { uuid: [1; 16] },
     //        // TODO: We should have a correct timestamp
     //        stamp: zenoh_ros_type::builtin_interfaces::Time { sec: 0, nanosec: 0 },
     //    },
