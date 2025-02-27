@@ -1,5 +1,7 @@
 use zenoh::{Config, Wait};
-use zenoh_ros_type::{action, example_interfaces::action as example_action};
+use zenoh_ros_type::{
+    action, example_interfaces::action as example_action, rcl_interfaces::action_msgs,
+};
 
 fn main() {
     let key_expr = "fibonacci";
@@ -28,8 +30,13 @@ fn main() {
     let _status_subscriber = session
         .declare_subscriber(status_expr)
         .callback(|sample| {
-            let status: action::ActionStatus = sample.payload().into();
-            println!("The status of {:?}: {:?}", status.goal_id, status.status);
+            let status_array: action_msgs::GoalStatusArray = sample.payload().into();
+            for status in status_array.status_list {
+                println!(
+                    "The status of {:?}: {:?}",
+                    status.goal_info.goal_id, status.status
+                );
+            }
         })
         .wait()
         .unwrap();
@@ -48,14 +55,20 @@ fn main() {
 
     //// Cancel goal client
     //std::thread::sleep(std::time::Duration::from_secs(1));
-    //let req = action::ActionCancelRequest {
-    //    goal_id: [1; 16],
-    //    timestamp: zenoh_ros_type::builtin_interfaces::Time { sec: 0, nanosec: 0 },
+    //let req = action_msgs::CancelGoalRequest {
+    //    goal_info: action_msgs::GoalInfo {
+    //        goal_id: zenoh_ros_type::unique_identifier_msgs::UUID { uuid: [1; 16] },
+    //        // TODO: We should have a correct timestamp
+    //        stamp: zenoh_ros_type::builtin_interfaces::Time { sec: 0, nanosec: 0 },
+    //    },
     //};
     //let recv_handler = _cancel_goal_client.get().payload(req).wait().unwrap();
     //let reply_sample = recv_handler.recv().unwrap();
-    //let reply: action::ActionCancelResponse = reply_sample.result().unwrap().payload().into();
-    //println!("Cancel {:?}: {:?}", reply.goal_id, reply.response_code);
+    //let reply: action_msgs::CancelGoalResponse = reply_sample.result().unwrap().payload().into();
+    //println!(
+    //    "Cancel {:?}: {:?}",
+    //    reply.goals_canceling, reply.return_code
+    //);
 
     // Wait for the result
     std::thread::sleep(std::time::Duration::from_secs(10));

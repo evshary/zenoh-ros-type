@@ -1,7 +1,10 @@
 use std::{sync::mpsc, time::Duration};
 
 use zenoh::{Config, Wait};
-use zenoh_ros_type::{action, builtin_interfaces, example_interfaces::action as example_action};
+use zenoh_ros_type::{
+    action, builtin_interfaces, example_interfaces::action as example_action,
+    rcl_interfaces::action_msgs, unique_identifier_msgs::UUID,
+};
 
 fn main() {
     let key_expr = "fibonacci";
@@ -55,13 +58,20 @@ fn main() {
         let goal = send_goal.goal;
 
         // Publish status EXECUTING
-        let msg = action::ActionStatus {
-            goal_id: vec![goal_id],
-            // TODO: We should have a correct timestamp
-            timestamp: builtin_interfaces::Time { sec: 0, nanosec: 0 },
-            status: action::action_status::EXECUTING,
+        let msg = action_msgs::GoalStatusArray {
+            status_list: vec![action_msgs::GoalStatus {
+                goal_info: action_msgs::GoalInfo {
+                    goal_id: UUID { uuid: goal_id },
+                    // TODO: We should have a correct timestamp
+                    stamp: builtin_interfaces::Time { sec: 0, nanosec: 0 },
+                },
+                status: action_msgs::goal_status::EXECUTING,
+            }],
         };
-        println!("Publish status {:?}: {:?}", msg.goal_id, msg.status);
+        println!(
+            "Publish status {:?}: {:?}",
+            msg.status_list[0].goal_info.goal_id, msg.status_list[0].status
+        );
         status_publisher.put(msg).wait().unwrap();
 
         // Calculate and publish the feedback
@@ -79,13 +89,20 @@ fn main() {
         }
 
         // Publish status SUCCEEDED
-        let msg = action::ActionStatus {
-            goal_id: vec![goal_id],
-            // TODO: We should have a correct timestamp
-            timestamp: builtin_interfaces::Time { sec: 0, nanosec: 0 },
-            status: action::action_status::SUCCEEDED,
+        let msg = action_msgs::GoalStatusArray {
+            status_list: vec![action_msgs::GoalStatus {
+                goal_info: action_msgs::GoalInfo {
+                    goal_id: UUID { uuid: goal_id },
+                    // TODO: We should have a correct timestamp
+                    stamp: builtin_interfaces::Time { sec: 0, nanosec: 0 },
+                },
+                status: action_msgs::goal_status::SUCCEEDED,
+            }],
         };
-        println!("Publish status {:?}: {:?}", msg.goal_id, msg.status);
+        println!(
+            "Publish status {:?}: {:?}",
+            msg.status_list[0].goal_info.goal_id, msg.status_list[0].status
+        );
         status_publisher.put(msg).wait().unwrap();
 
         // Reply the get_result
@@ -93,7 +110,7 @@ fn main() {
         let get_result: action::ActionResultRequest = query.payload().unwrap().into();
         println!("Get result goal_id: {:?}", get_result.goal_id);
         let get_result_response = example_action::FibonacciResult {
-            status: action::action_status::SUCCEEDED,
+            status: action_msgs::goal_status::SUCCEEDED,
             sequence: feedback,
         };
         query
