@@ -1,6 +1,7 @@
-use crate::unique_identifier_msgs::UUID;
 use serde_derive::{Deserialize, Serialize};
 use zenoh_ros_derive::ZBytesCdr;
+
+use crate::unique_identifier_msgs::UUID;
 
 // TODO: Find a way to avoid using UUID
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
