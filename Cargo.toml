@@ -22,9 +22,9 @@ version = "0.3.6"
 [workspace.dependencies]
 cdr = "0.2.4"
 paste = "1.0.15"
-serde = "1.0.216"
-serde_derive = "1.0.216"
-zenoh = { version = "1.1.0", features = [
+serde = "1.0.218"
+serde_derive = "1.0.218"
+zenoh = { version = "1.2.1", features = [
   "unstable",
 ] }
 zenoh-ros-derive = { version = "0.3.6", path = "zenoh-ros-derive" }
