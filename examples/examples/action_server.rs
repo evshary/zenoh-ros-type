@@ -6,6 +6,7 @@ use zenoh_ros_type::{
     rcl_interfaces::action_msgs,
 };
 
+// TODO: This should be moved to action.rs
 fn main() {
     let key_expr = "fibonacci";
     let send_goal_expr = key_expr.to_string() + "/_action/send_goal";
