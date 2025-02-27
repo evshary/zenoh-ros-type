@@ -4,7 +4,7 @@
 use serde_derive::{Deserialize, Serialize};
 use zenoh_ros_derive::ZBytesCdr;
 
-use crate::builtin_interfaces::Time;
+use crate::{builtin_interfaces::Time, unique_identifier_msgs::UUID};
 
 /// The response struct for Action SendGoal
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
@@ -16,5 +16,5 @@ pub struct ActionSendGoalResponse {
 /// The request struct for getting ActionResult
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct ActionResultRequest {
-    pub goal_id: [u8; 16],
+    pub goal_id: UUID,
 }

@@ -1,6 +1,7 @@
 use zenoh::{bytes::ZBytes, Config, Wait};
 use zenoh_ros_type::{
     action, example_interfaces::action as example_action, rcl_interfaces::action_msgs,
+    unique_identifier_msgs::UUID,
 };
 
 // TODO: Move to action.rs
@@ -68,11 +69,10 @@ impl ZenohActionClient<'_> {
         reply_sample.result().unwrap().payload().into()
     }
 
-    // TODO: Use UUID
-    pub fn cancel_goal(&self, uuid: [u8; 16]) -> action_msgs::CancelGoalResponse {
+    pub fn cancel_goal(&self, uuid: UUID) -> action_msgs::CancelGoalResponse {
         let req = action_msgs::CancelGoalRequest {
             goal_info: action_msgs::GoalInfo {
-                goal_id: zenoh_ros_type::unique_identifier_msgs::UUID { uuid },
+                goal_id: uuid,
                 // TODO: We should have a correct timestamp
                 stamp: zenoh_ros_type::builtin_interfaces::Time { sec: 0, nanosec: 0 },
             },
@@ -82,9 +82,8 @@ impl ZenohActionClient<'_> {
         reply_sample.result().unwrap().payload().into()
     }
 
-    // TODO: Use UUID
-    pub fn get_result(&self, goal_id: [u8; 16]) -> ZBytes {
-        let req = action::ActionResultRequest { goal_id };
+    pub fn get_result(&self, uuid: UUID) -> ZBytes {
+        let req = action::ActionResultRequest { goal_id: uuid };
         let recv_handler = self.get_result_client.get().payload(req).wait().unwrap();
         let reply_sample = recv_handler.recv().unwrap();
         reply_sample.result().unwrap().payload().clone()
@@ -98,8 +97,9 @@ fn main() {
     std::thread::sleep(std::time::Duration::from_secs(1));
 
     // Send goal client
+    let uuid = UUID { uuid: [1; 16] };
     let req = example_action::FibonacciSendGoal {
-        goal_id: [1; 16], // TODO: We should use random here
+        goal_id: uuid.clone(), // TODO: We should use random here
         goal: 10,
     };
     let reply = action_client.send_goal(req);
@@ -107,7 +107,7 @@ fn main() {
 
     //// Cancel goal client
     //std::thread::sleep(std::time::Duration::from_secs(1));
-    //let reply = action_client.cancel_goal([1; 16]);
+    //let reply = action_client.cancel_goal(uuid.clone());
     //println!(
     //    "Cancel {:?}: {:?}",
     //    reply.goals_canceling, reply.return_code
@@ -117,6 +117,6 @@ fn main() {
     std::thread::sleep(std::time::Duration::from_secs(10));
 
     // Get result client
-    let reply: example_action::FibonacciResult = action_client.get_result([1; 16]).into();
+    let reply: example_action::FibonacciResult = action_client.get_result(uuid.clone()).into();
     println!("The result: {:?} {:?}", reply.status, reply.sequence);
 }
