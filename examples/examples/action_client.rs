@@ -1,5 +1,7 @@
 use zenoh::{Config, Wait};
-use zenoh_ros_type::{action, example_interfaces::action as example_action};
+use zenoh_ros_type::{
+    action, example_interfaces::action as example_action, rcl_interfaces::action_msgs,
+};
 
 fn main() {
     let key_expr = "fibonacci";
@@ -28,8 +30,13 @@ fn main() {
     let _status_subscriber = session
         .declare_subscriber(status_expr)
         .callback(|sample| {
-            let status: action::ActionStatus = sample.payload().into();
-            println!("The status of {:?}: {:?}", status.goal_id, status.status);
+            let status_array: action_msgs::GoalStatusArray = sample.payload().into();
+            for status in status_array.status_list {
+                println!(
+                    "The status of {:?}: {:?}",
+                    status.goal_info.goal_id, status.status
+                );
+            }
         })
         .wait()
         .unwrap();
