@@ -1,4 +1,4 @@
-use zenoh::{bytes::ZBytes, Config, Wait};
+use zenoh::{bytes::ZBytes, sample::Sample, Config, Wait};
 use zenoh_ros_type::{
     action, example_interfaces::action as example_action, rcl_interfaces::action_msgs,
     unique_identifier_msgs::UUID,
@@ -6,12 +6,13 @@ use zenoh_ros_type::{
 
 // TODO: Move to action.rs
 pub struct ZenohActionClient<'a> {
-    _session: zenoh::session::Session,
+    key_expr: String,
+    session: zenoh::session::Session,
     send_goal_client: zenoh::query::Querier<'a>,
     get_result_client: zenoh::query::Querier<'a>,
     cancel_goal_client: zenoh::query::Querier<'a>,
-    _feedback_subscriber: zenoh::pubsub::Subscriber<()>,
-    _status_subscriber: zenoh::pubsub::Subscriber<()>,
+    feedback_subscriber: Option<zenoh::pubsub::Subscriber<()>>,
+    status_subscriber: Option<zenoh::pubsub::Subscriber<()>>,
 }
 
 impl ZenohActionClient<'_> {
@@ -19,48 +20,52 @@ impl ZenohActionClient<'_> {
         let send_goal_expr = key_expr.to_string() + "/_action/send_goal";
         let cancel_goal_expr = key_expr.to_string() + "/_action/cancel_goal";
         let get_result_expr = key_expr.to_string() + "/_action/get_result";
-        let feedback_expr = key_expr.to_string() + "/_action/feedback";
-        let status_expr = key_expr.to_string() + "/_action/status";
 
         // Declare the querier / subscriber for the action client
         let session = zenoh::open(Config::default()).wait().unwrap();
         let send_goal_client = session.declare_querier(send_goal_expr).wait().unwrap();
         let get_result_client = session.declare_querier(get_result_expr).wait().unwrap();
         let cancel_goal_client = session.declare_querier(cancel_goal_expr).wait().unwrap();
-        // TODO: We need to accept the callback
-        let feedback_subscriber = session
-            .declare_subscriber(feedback_expr)
-            .callback(|sample| {
-                let feedback: example_action::FibonacciFeedback = sample.payload().into();
-                println!(
-                    "The feedback of {:?}: {:?}",
-                    feedback.goal_id, feedback.sequence
-                );
-            })
-            .wait()
-            .unwrap();
-        // TODO: We need to accept the callback
-        let status_subscriber = session
-            .declare_subscriber(status_expr)
-            .callback(|sample| {
-                let status_array: action_msgs::GoalStatusArray = sample.payload().into();
-                for status in status_array.status_list {
-                    println!(
-                        "The status of {:?}: {:?}",
-                        status.goal_info.goal_id, status.status
-                    );
-                }
-            })
-            .wait()
-            .unwrap();
+
         ZenohActionClient {
-            _session: session,
+            key_expr: key_expr.to_string(),
+            session,
             send_goal_client,
             get_result_client,
             cancel_goal_client,
-            _feedback_subscriber: feedback_subscriber,
-            _status_subscriber: status_subscriber,
+            feedback_subscriber: None,
+            status_subscriber: None,
         }
+    }
+
+    pub fn feedback_callback<F>(&mut self, callback: F)
+    where
+        F: Fn(Sample) + Send + Sync + 'static,
+    {
+        let feedback_expr = self.key_expr.to_string() + "/_action/feedback";
+
+        let feedback_subscriber = self
+            .session
+            .declare_subscriber(feedback_expr)
+            .callback(callback)
+            .wait()
+            .unwrap();
+        self.feedback_subscriber = Some(feedback_subscriber);
+    }
+
+    pub fn status_callback<F>(&mut self, callback: F)
+    where
+        F: Fn(Sample) + Send + Sync + 'static,
+    {
+        let status_expr = self.key_expr.to_string() + "/_action/status";
+
+        let status_subscriber = self
+            .session
+            .declare_subscriber(status_expr)
+            .callback(callback)
+            .wait()
+            .unwrap();
+        self.status_subscriber = Some(status_subscriber);
     }
 
     pub fn send_goal<T: Into<ZBytes>>(&self, req: T) -> action::ActionSendGoalResponse {
@@ -92,14 +97,34 @@ impl ZenohActionClient<'_> {
 
 fn main() {
     let key_expr = "fibonacci";
-    let action_client = ZenohActionClient::new(key_expr);
+    let mut action_client = ZenohActionClient::new(key_expr);
+
+    // feedback subscriber
+    action_client.feedback_callback(|sample| {
+        let feedback: example_action::FibonacciFeedback = sample.payload().into();
+        println!(
+            "The feedback of {:?}: {:?}",
+            feedback.goal_id, feedback.sequence
+        );
+    });
+
+    // status subscriber
+    action_client.status_callback(|sample| {
+        let status_array: action_msgs::GoalStatusArray = sample.payload().into();
+        for status in status_array.status_list {
+            println!(
+                "The status of {:?}: {:?}",
+                status.goal_info.goal_id, status.status
+            );
+        }
+    });
 
     std::thread::sleep(std::time::Duration::from_secs(1));
 
     // Send goal client
-    let uuid = UUID { uuid: [1; 16] };
+    let uuid = UUID { uuid: [1; 16] }; // TODO: We should use random here
     let req = example_action::FibonacciSendGoal {
-        goal_id: uuid.clone(), // TODO: We should use random here
+        goal_id: uuid.clone(),
         goal: 10,
     };
     let reply = action_client.send_goal(req);
