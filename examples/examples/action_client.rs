@@ -1,6 +1,7 @@
 use zenoh::{Config, Wait};
 use zenoh_ros_type::{
     action, example_interfaces::action as example_action, rcl_interfaces::action_msgs,
+    unique_identifier_msgs::UUID,
 };
 
 fn main() {
@@ -55,14 +56,20 @@ fn main() {
 
     //// Cancel goal client
     //std::thread::sleep(std::time::Duration::from_secs(1));
-    //let req = action::ActionCancelRequest {
-    //    goal_id: [1; 16],
-    //    timestamp: zenoh_ros_type::builtin_interfaces::Time { sec: 0, nanosec: 0 },
+    //let req = action_msgs::CancelGoalRequest {
+    //    goal_info: action_msgs::GoalInfo {
+    //        goal_id: UUID { uuid: [1; 16] },
+    //        // TODO: We should have a correct timestamp
+    //        stamp: zenoh_ros_type::builtin_interfaces::Time { sec: 0, nanosec: 0 },
+    //    },
     //};
     //let recv_handler = _cancel_goal_client.get().payload(req).wait().unwrap();
     //let reply_sample = recv_handler.recv().unwrap();
-    //let reply: action::ActionCancelResponse = reply_sample.result().unwrap().payload().into();
-    //println!("Cancel {:?}: {:?}", reply.goal_id, reply.response_code);
+    //let reply: action_msgs::CancelGoalResponse = reply_sample.result().unwrap().payload().into();
+    //println!(
+    //    "Cancel {:?}: {:?}",
+    //    reply.goals_canceling, reply.return_code
+    //);
 
     // Wait for the result
     std::thread::sleep(std::time::Duration::from_secs(10));
