@@ -1,8 +1,9 @@
 /// The struct is used by ROS action.
 /// If you want to sent ROS action with Zenoh directly. You should include the header.
 /// Refer to https://design.ros2.org/articles/actions.html for more detail.
-use serde_derive::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
+
+use serde_derive::{Deserialize, Serialize};
 use zenoh::{bytes::ZBytes, sample::Sample, Config, Wait};
 use zenoh_ros_derive::ZBytesCdr;
 
