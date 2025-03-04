@@ -28,7 +28,7 @@ fn get_current_time() -> Time {
         .expect("Time went backwards");
     Time {
         sec: now.as_secs() as i32,
-        nanosec: now.subsec_nanos() as u32,
+        nanosec: now.subsec_nanos(),
     }
 }
 
