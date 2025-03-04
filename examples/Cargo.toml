@@ -11,5 +11,6 @@ repository = { workspace = true }
 version = { workspace = true }
 
 [dependencies]
+rand = { workspace = true }
 zenoh = { workspace = true }
 zenoh-ros-type = { workspace = true }

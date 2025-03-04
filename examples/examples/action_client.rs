@@ -1,3 +1,4 @@
+use rand::Rng;
 use zenoh_ros_type::{
     action, example_interfaces::action as example_action, rcl_interfaces::action_msgs,
     unique_identifier_msgs::UUID,
@@ -30,7 +31,10 @@ fn main() {
     std::thread::sleep(std::time::Duration::from_secs(1));
 
     // Send goal client
-    let uuid = UUID { uuid: [1; 16] }; // TODO: We should use random here
+    let mut rng = rand::rng();
+    let uuid = UUID {
+        uuid: rng.random::<[u8; 16]>(),
+    };
     let req = example_action::FibonacciSendGoal {
         goal_id: uuid.clone(),
         goal: 10,
