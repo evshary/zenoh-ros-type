@@ -1,6 +1,8 @@
 /// The struct is used by ROS action.
 /// If you want to sent ROS action with Zenoh directly. You should include the header.
 /// Refer to https://design.ros2.org/articles/actions.html for more detail.
+use std::time::{SystemTime, UNIX_EPOCH};
+
 use serde_derive::{Deserialize, Serialize};
 use zenoh::{bytes::ZBytes, sample::Sample, Config, Wait};
 use zenoh_ros_derive::ZBytesCdr;
@@ -18,6 +20,16 @@ pub struct ActionSendGoalResponse {
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
 pub struct ActionResultRequest {
     pub goal_id: UUID,
+}
+
+fn get_current_time() -> Time {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards");
+    Time {
+        sec: now.as_secs() as i32,
+        nanosec: now.subsec_nanos(),
+    }
 }
 
 // Used by action client
@@ -94,8 +106,7 @@ impl ZenohActionClient<'_> {
         let req = action_msgs::CancelGoalRequest {
             goal_info: action_msgs::GoalInfo {
                 goal_id: uuid,
-                // TODO: We should have a correct timestamp
-                stamp: Time { sec: 0, nanosec: 0 },
+                stamp: get_current_time(),
             },
         };
         let recv_handler = self.cancel_goal_client.get().payload(req).wait().unwrap();
