@@ -9,8 +9,8 @@ fn main() {
     let publisher = session.declare_publisher(key_expr).wait().unwrap();
     let mut cnt = 0;
     loop {
-        let data = format!("Hello World {}!", cnt);
-        println!("Publish: {}", data);
+        let data = format!("Hello World {cnt}!");
+        println!("Publish: {data}");
         let msg = std_msgs::String_ { data };
         publisher.put(msg).wait().unwrap();
         std::thread::sleep(Duration::from_secs(1));
