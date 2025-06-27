@@ -48,7 +48,7 @@ fn main() {
     let _cancel_goal_server = session
         .declare_queryable(cancel_goal_expr)
         .callback(|query| {
-            println!("{:?}", query);
+            println!("{query:?}");
         })
         .wait()
         .unwrap();
@@ -80,7 +80,7 @@ fn main() {
         // give me a for loop with i increasing until 10
         for _ in 1..goal {
             feedback.push(feedback[feedback.len() - 1] + feedback[feedback.len() - 2]);
-            println!("Publish feedback: {:?}", feedback);
+            println!("Publish feedback: {feedback:?}");
             let msg = example_action::FibonacciFeedback {
                 goal_id: goal_id.clone(),
                 sequence: feedback.clone(),

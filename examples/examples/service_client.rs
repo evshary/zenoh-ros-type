@@ -9,7 +9,7 @@ fn main() {
     let client = session.declare_querier(key_expr).wait().unwrap();
 
     // Send the request
-    println!("Send AddTwoIntsRequest: a={}, b={}", a, b);
+    println!("Send AddTwoIntsRequest: a={a}, b={b}");
     let req = srv::AddTwoIntsRequest { a, b };
     let recv_handler = client.get().payload(req).wait().unwrap();
 
