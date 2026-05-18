@@ -1,3 +1,4 @@
+use serde_big_array::BigArray;
 use serde_derive::{Deserialize, Serialize};
 use zenoh_ros_derive::ZBytesCdr;
 
@@ -65,6 +66,25 @@ pub struct Quaternion {
 pub struct Pose {
     pub position: Point,
     pub orientation: Quaternion,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
+pub struct PoseStamped {
+    pub header: std_msgs::Header,
+    pub pose: Pose,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
+pub struct PoseWithCovariance {
+    pub pose: Pose,
+    #[serde(with = "BigArray")]
+    pub covariance: [f64; 36],
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
+pub struct PoseWithCovarianceStamped {
+    pub header: std_msgs::Header,
+    pub pose: PoseWithCovariance,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, ZBytesCdr)]
